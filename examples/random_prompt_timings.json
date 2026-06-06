@@ -1,0 +1,13 @@
+{
+  "prompt": "How should a small independent publisher decide whether to launch a short series of AI-assisted books about future space warfare?",
+  "timings": {
+    "vectorize_seconds": 0.002725056999906883,
+    "weight_seconds": 0.001511373000084859,
+    "pca_seconds": 0.0014531799999986106,
+    "derive_total_seconds": 0.005689609999990353,
+    "render_2d_contour_seconds": 0.9436041840000371,
+    "render_3d_volume_seconds": 0.9112185420000287,
+    "render_3d_semantic_clouds_seconds": 1.4347303880000482,
+    "end_to_end_seconds": 3.2958899589999646
+  }
+}
