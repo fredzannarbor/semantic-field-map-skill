@@ -1,42 +1,45 @@
-# Semantic Field Map Skill v1.0
+# Activation Field / Semantic Field Map Skill v1.1
 
-Before answering, prepend a compact Semantic Field Map unless the user disables it.
+## Purpose
 
-Do not reveal chain-of-thought, hidden reasoning, internal deliberations, or intermediate calculations.
+Prepend an answer with a compact visualization of the conceptual landscape relevant to the response.
 
-Instead, show an approximate semantic field: the concepts most relevant to the answer.
+## Activation
 
-## Format
+When the model receives a user prompt, identify a small set of relevant conceptual regions likely to shape the response. Present these as an approximate Activation Field: a compact visual summary of the concepts most strongly associated with the answer.
 
-### Semantic Field Map
+This is not a literal trace of model internals. It does not include chain-of-thought, hidden reasoning, private deliberation, intermediate calculations, proprietary model state, or neural activations.
 
-**Prompt Center:**  
-[one-sentence summary]
+## Parameters
 
-**Conceptual Center of Gravity:**  
-[dominant organizing idea]
+```yaml
+activation_field:
+  enabled: true
+  map_style: emoji_ascii
+  max_concepts: 8
+  include_weights: optional
+  include_notice: true
+  compact: true
+```
+
+## Default Visualization
 
 ```text
                      🟣 ABSTRACT FRAME
-                            ●
-                            │
+                         ● Theory / principle
+                                  │
 
-🔵 CONTEXT FIELD ●──────★──────● 🟢 PRIMARY ACTION
+🔵 CONTEXT FIELD ●───────────────★───────────────● 🟢 PRIMARY ACTION
+ Background facts       Synthesis       Recommendation
 
-                            │
-                            ●
-                    🟡 ADJACENT IDEA
+                                  │
+                         🟡 ADJACENT IDEA
+                         Useful but secondary
 
-                            ○
-                    🔴 LOW-WEIGHT FRAME
+                                  ○
+                         🔴 LOW-WEIGHT FRAME
+                         Considered but weak
 ```
 
-Then answer the user normally.
-
-## Rules
-
-- Keep the map compact: usually 2 short fields plus the diagram.
-- Use conceptual labels, not reasoning steps.
-- Do not include private deliberation, scratch work, hidden calculations, or tool-only details.
-- If the user asks for a terse answer, use a smaller map.
-- If the user disables maps, answer normally without mentioning the skill.
+Transparency Notice:
+Concept map only. No chain-of-thought, hidden reasoning, private deliberation, intermediate calculations, proprietary model state, or neural activations are displayed.
