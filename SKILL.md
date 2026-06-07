@@ -20,8 +20,11 @@ The skill takes an optional **view** keyword plus optional tuning parameters. Wi
 | `topographic` · `topo` · `contour` · `2d` | continuous 2D topographic **PNG** | `topographic_map.py --mode topo` |
 | `volume` · `surface` · `3d` | 3D terrain surface **PNG** | `topographic_map.py --mode surface` |
 | `terrain-text` · `volume-text` · `grid` | inline emoji-grid (no image) | `semantic_field.py --view terrain` / `--view volume` |
+| `clouds` · `semantic-clouds` | 3D semi-transparent activation clouds | `src/generate_activation_field_examples.py` |
 
 Tuning parameters (pass through to the PNG renderer): `sigma=` (spread; smaller ⇒ sharper, more separated hills), `levels=` (isoline count), `res=`, `title="…"`, `no-labels`; 3D also takes `elev=` / `azim=` (view angles). `off` / `disable` stops prepending maps for the rest of the session.
+
+When concepts should be **derived from the text** rather than hand-placed, `src/generate_activation_field_examples.py` builds the concept set from a prompt+answer pair (TF-IDF + PCA + cosine similarity) and emits `contour_2d`, `volume_3d`, and `semantic_clouds` PNGs — useful for demos/reports. The hand-placed `scripts/` renderers above give you direct control over positions and weights.
 
 Examples:
 - `topographic` → render the 2D topographic PNG.
