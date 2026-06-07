@@ -17,14 +17,14 @@ The skill takes an optional **view** keyword plus optional tuning parameters. Wi
 | view keyword | output | how to produce |
 | --- | --- | --- |
 | `field` (default) | inline labeled diagram (text) | hand-place the labeled node diagram (see below) |
-| `topographic` · `topo` · `contour` · `2d` | continuous 2D topographic **PNG** | `topographic_map.py --mode topo` |
-| `volume` · `surface` · `3d` | 3D terrain surface **PNG** | `topographic_map.py --mode surface` |
-| `terrain-text` · `volume-text` · `grid` | inline emoji-grid (no image) | `semantic_field.py --view terrain` / `--view volume` |
-| `clouds` · `semantic-clouds` | 3D semi-transparent activation clouds | `src/generate_activation_field_examples.py` |
+| `topographic` · `topo` · `contour` · `2d` | continuous 2D topographic **PNG** | `semantic_map.py --view topo` |
+| `volume` · `surface` · `3d` | 3D terrain surface **PNG** | `semantic_map.py --view surface` |
+| `terrain-text` · `volume-text` · `grid` | inline emoji-grid (no image) | `semantic_map.py --view grid` |
+| `clouds` · `semantic-clouds` | 3D semi-transparent activation clouds | `semantic_map.py --view clouds` |
 
-Tuning parameters (pass through to the PNG renderer): `sigma=` (spread; smaller ⇒ sharper, more separated hills), `levels=` (isoline count), `res=`, `title="…"`, `no-labels`; 3D also takes `elev=` / `azim=` (view angles). `off` / `disable` stops prepending maps for the rest of the session.
+All views are produced by the single generator **`scripts/semantic_map.py`** (`--view topo|surface|clouds|grid`). Tuning parameters: `--sigma` (spread; smaller ⇒ sharper, more separated hills), `--levels` (isoline count), `--res`, `--title`, `--no-labels`; 3D adds `--elev` / `--azim` (view angles); the grid view adds `--width` / `--height`. `off` / `disable` stops prepending maps for the rest of the session.
 
-When concepts should be **derived from the text** rather than hand-placed, `src/generate_activation_field_examples.py` builds the concept set from a prompt+answer pair (TF-IDF + PCA + cosine similarity) and emits `contour_2d`, `volume_3d`, and `semantic_clouds` PNGs — useful for demos/reports. The hand-placed `scripts/` renderers above give you direct control over positions and weights.
+When concepts should be **derived from the text** rather than hand-placed, add `--derive` (with `--text-json` holding `{prompt, answer, concepts}`, else a built-in demo). It builds the concept set from the prompt+answer pair (TF-IDF + cosine similarity + PCA) — useful for `clouds`/demos. Hand-placed concepts give you direct control over positions and weights.
 
 Examples:
 - `topographic` → render the 2D topographic PNG.
@@ -56,7 +56,7 @@ echo '[
   {"label": "Calvin cycle", "x": 0.22, "y": 0.34, "weight": 0.80},
   {"label": "ATP",          "x": 0.76, "y": 0.30, "weight": 0.66},
   {"label": "stomata",      "x": 0.32, "y": 0.78, "weight": 0.55}
-]' | uv run python scripts/topographic_map.py --mode topo --out /tmp/semantic_field/topo.png
+]' | uv run python scripts/semantic_map.py --view topo --out /tmp/semantic_field/topo.png
 ```
 
 ### Volume — 3D surface (rendered PNG)
@@ -64,10 +64,10 @@ echo '[
 The same computed field as a continuous curved 3D terrain surface, in the same heat gradient, with contour isolines on the floor and concept names floating above the surface on short dashed leader lines (projected from each peak, spread across two tiers so they never collide or get occluded).
 
 ```bash
-... | uv run python scripts/topographic_map.py --mode surface --out /tmp/semantic_field/volume.png
+... | uv run python scripts/semantic_map.py --view surface --out /tmp/semantic_field/volume.png
 ```
 
-Flags (both modes): `--demo`, `--sigma` (smaller ⇒ sharper, more separated hills), `--levels` (isoline count), `--res`, `--no-labels`, `--title`; 3D adds `--elev` / `--azim` view angles. Requires the project env (`uv run`) so `matplotlib`/`numpy` resolve — both are already installed; **do not install anything**. After rendering, display/attach the PNG to the user.
+Requires the project env (`uv run`) so `matplotlib`/`numpy` resolve (and `scikit-learn` for `--derive`); see `requirements.txt`. After rendering, display/attach the PNG to the user.
 
 ### Inline field map (no image needed)
 
@@ -91,7 +91,7 @@ A compact labeled diagram for quick, text-only context. Use real concept labels 
 
 ### Inline text terrain/volume (fallback only)
 
-If no code-execution or image output is available, compute the same field by hand on a small grid with `scripts/semantic_field.py` (pure stdlib, emits a banded emoji grid: `python3 scripts/semantic_field.py --view both`). This is a coarse fallback for the rendered PNGs above — do not fabricate a grid that isn't the computed field.
+If no image output is available, use the grid view: `uv run python scripts/semantic_map.py --view grid` emits banded emoji terrain + volume maps computed from the same field. If you can't run code at all, evaluate the Gaussian mixture by hand on a small grid — do not fabricate a grid that isn't the computed field.
 
 ## Rules
 

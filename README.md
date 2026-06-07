@@ -14,13 +14,12 @@ Activation Field maps do **not** reveal chain-of-thought, hidden reasoning, priv
 
 ## Files
 
-- `SKILL.md` — active skill definition (selectable `view` argument + computed render pipeline).
-- `SEMANTIC_FIELD_MAP_SKILL.md` — portable base skill.
-- `src/generate_activation_field_examples.py` — parameterized demo generator that derives concept weights/coordinates from a visible prompt+answer pair (TF-IDF + PCA + cosine similarity), then renders contour / volume / cloud PNGs.
-- `scripts/topographic_map.py` — matplotlib renderer for the computed image views (continuous 2-D topographic + 3-D volume surface) from a Gaussian-mixture field over the answer's concepts.
-- `scripts/semantic_field.py` — pure-stdlib inline emoji-grid fallback (no image output needed).
-- `examples/` — generated 2-D contour, 3-D volume, and 3-D semantic-cloud examples.
-- `assets/` — sample rendered topographic + 3-D volume PNGs.
+- `SKILL.md` — the single canonical skill definition (selectable `view` argument + computed render pipeline).
+- `SEMANTIC_FIELD_MAP_SKILL.md` — pointer to `SKILL.md` (kept for older references).
+- `scripts/semantic_map.py` — the one generator for every view: `topo` (continuous 2-D topographic), `surface` (3-D volume), `clouds` (3-D semantic clouds), `grid` (inline emoji text). Concepts are hand-placed JSON or `--derive`d from a prompt+answer pair (TF-IDF + PCA).
+- `requirements.txt` — `matplotlib`, `numpy`, `scikit-learn` (the last only for `--derive`).
+- `examples/` — sample derived-value tables/timings.
+- `assets/` — sample rendered topographic, 3-D volume, and semantic-cloud PNGs.
 
 ## Visualization modes
 
@@ -35,19 +34,23 @@ The image views are computed from a real Gaussian-mixture scalar field over the 
 
 ```bash
 # continuous 2-D topographic map
-uv run python scripts/topographic_map.py --demo --mode topo --out /tmp/semantic_field/topo.png
+uv run python scripts/semantic_map.py --demo --view topo --out /tmp/semantic_field/topo.png
 # 3-D volume surface (floating, non-colliding labels)
-uv run python scripts/topographic_map.py --demo --mode surface --out /tmp/semantic_field/volume.png
+uv run python scripts/semantic_map.py --demo --view surface --out /tmp/semantic_field/volume.png
+# 3-D semantic clouds (concepts derived from a prompt+answer pair)
+uv run python scripts/semantic_map.py --derive --view clouds --out /tmp/semantic_field/clouds.png
 ```
 
 ![Computed topographic semantic map](assets/topographic_example.png)
 
 ![Computed 3D volume semantic surface](assets/volume_3d_example.png)
 
+![Activation Field semantic clouds](assets/semantic_clouds_example.png)
+
 When image output isn't available, fall back to the inline emoji grid:
 
 ```bash
-python3 scripts/semantic_field.py --demo --view both
+uv run python scripts/semantic_map.py --demo --view grid
 ```
 
 ## Example prompt
